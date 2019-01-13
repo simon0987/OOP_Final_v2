@@ -14,21 +14,21 @@ import java.util.Calendar;
  * This class record some constant value and provide some useful methods.
  * @author Jerry
  */
-public class ticket {
+public class Ticket {
 	public int tickettype_=0;
 	public String date_="";
 	public int startStation_=-1;
 	public int endStation_=-1;
 	public int trainNumber_=-1;
 	public String seatNumber_="";
-	public String orderNumber_="-1";
+	public int orderNumber_=-1;
 	public int starttime;
 	public int endtime;
 	private int price_=-1;
 	public boolean to;//true去程false回程
 	public Train train;
 	
-	ticket(int tickettype,String date,int startStation,int endStation,int trainNumber,boolean togo,int starttim,int endtim,Train train){
+	public Ticket(int tickettype,String date,int startStation,int endStation,int trainNumber,boolean togo,int starttim,int endtim,Train train){
 		starttime=starttim;
 		endtime=endtim;
 		tickettype_=tickettype;
@@ -37,21 +37,20 @@ public class ticket {
 		endStation_=endStation;
 		trainNumber_= trainNumber;
 		to=togo;
-		this.train = train;
+		this.train=train;
 		price_=price(tickettype,startStation,endStation);
-		
 	}
 
-	String setSeatNumber(int favorSeat,String orderNumber){
+	String setSeatNumber(int favorSeat,int orderNumber,String s){
 		orderNumber_=orderNumber;
-		seatNumber_=getTrainofSeats(favorSeat,trainNumber_,startStation_,endStation_);
-		price_=price(tickettype_,startStation_,endStation_);		
+		seatNumber_=s;
+		//price_=price(tickettype_,startStation_,endStation_);		
 		return null;
 		
 	}
 
 	private String getTrainofSeats(int favorSeat,int trainnumber,int startStation,int endStation) {
-		return "true";
+		return seatNumber_;
 	}
 	
 	private int price(int tickettype,int startStation,int endStation) {

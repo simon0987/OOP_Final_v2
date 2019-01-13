@@ -10,7 +10,7 @@ import dao.Train_DAO;
 import entity.Candidate;
 import entity.Station;
 
-public class SearchDiscount {
+public class SearchDiscountTrain {
 	
 	public static void searchDis(DefaultTableModel model,int date, int direction, int startTime, int endTime, int startStation, int endStation) throws SQLException, ParseException {
 		int weekday = Convert_Time.getWeekDay(date);

@@ -1,4 +1,4 @@
-package parser;
+package dao;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -8,12 +8,15 @@ import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 
+import parser.MysqlExe;
+import parser.MysqlExe.RetVal;
+
 
 /**
  * This class is used to parse the online time table. 
  * @author Jerry
  */
-public class TimeTableParser{
+public class TimeTableDAO{
 
 	public Document doc;
 	public final String direction[] = {"timeTable_down", "timeTable_up"};

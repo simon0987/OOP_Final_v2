@@ -23,9 +23,8 @@ import java.awt.Color;
 import javax.swing.SwingConstants;
 
 import controll.BookTicket;
-import controll.SearchByID;
-import controll.SearchCandidate;
-import controll.SearchTicketID;
+import controll.SearchTicket;
+import controll.SearchOrderNum;
 import controll.UpdateTicket;
 import controll.ParseTimeTable;
 import controll.Convert_Time;
@@ -597,7 +596,7 @@ public class MainPage {
 			public void actionPerformed(ActionEvent arg0) {
 				String uid = uid_ok.getText();
 				String code = code_ok.getText();
-				SearchByID search = new SearchByID(uid, code);
+				SearchTicket search = new SearchTicket(uid, code);
 				search.exec(0);
 			}
 		});
@@ -668,7 +667,7 @@ public class MainPage {
 				String date = (String) date_no.getSelectedItem();
 				int start = start_no.getSelectedIndex();
 				int end = end_no.getSelectedIndex();
-				SearchTicketID search = new SearchTicketID(uid, train_id, Convert_Time.getDateInt(date), start, end);
+				SearchOrderNum search = new SearchOrderNum(uid, train_id, Convert_Time.getDateInt(date), start, end);
 				search.exec();
 			}
 		});

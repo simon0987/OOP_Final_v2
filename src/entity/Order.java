@@ -1,47 +1,48 @@
 package entity;
 import java.util.*;
 import dao.TicketDAO;
+
 public class Order {
 	private int OrderNumber;
 	private String userID;
 	private int howmanytickets;
-	private int favorseat;
-	private ArrayList <ticket> tickets = new ArrayList<ticket>();
+	private int  favorseat;
+	private ArrayList <Ticket> tickets = new ArrayList<Ticket>();
 	//0 隨機 1靠窗2靠走道
 	public Order(String userID_,int howmanyTickets,int Tickettype,int startStation,int endStation,Train train,Train train2,int seat,boolean toback,int orderNumber){//ture有回來false單程
 		//OrderNumber=getOrderNumberFromBase(); //in interface.
 		String date=""+train.date;
 		int trainNumber=train.train_id;
-		this.favorseat=seat;
-		OrderNumber=orderNumber;
+		favorseat=seat;
 		userID=userID_;
-		
+		OrderNumber=orderNumber;
 		if(toback==true) {
 			String date2=""+train2.date;
 			int trainNumber2=train2.train_id;
 			howmanytickets=howmanyTickets*2;
 			for(int i=0;i<howmanyTickets*2;i++) {
 				if(i<howmanyTickets) {
-					tickets.add(new ticket(Tickettype,date,startStation,endStation,trainNumber,true,train.t1,train.t2,train));
+					tickets.add(new Ticket(Tickettype,date,startStation,endStation,trainNumber,true,train.t1,train.t2,train));
 				}
-				else tickets.add(new ticket(Tickettype,date2,startStation,endStation,trainNumber2,false,train2.t1,train2.t2,train2));
+				else tickets.add(new Ticket(Tickettype,date2,endStation,startStation,trainNumber2,false,train2.t1,train2.t2,train2));
 			}
 		}
 		else {
 			howmanytickets=howmanyTickets;
-			for(int i=0;i<howmanyTickets;i++) {	
-				tickets.add(new ticket(Tickettype,date,startStation,endStation,trainNumber,true,train.t1,train.t2,train));			
+			for(int i=0;i<howmanyTickets;i++) {					
+				tickets.add(new Ticket(Tickettype,date,startStation,endStation,trainNumber,true,train.t1,train.t2,train));			
 			}
 		}
 	}
 	
 	public static ArrayList<Integer> getOrderNum(String uid, int train_id, int date, int start, int end) {
-		return new TicketDAO().getOrderNumberFromBase(uid,train_id,date,start,end);
+		String d=date+"";
+		return new TicketDAO().getOrderNumberFromBase(uid,train_id,d,start,end);
 	}
 	
 	public int getTotalPrice() {
 		int price=0;
-		for(ticket tmp: tickets) {
+		for(Ticket tmp: tickets) {
 			price+=tmp.getprice();
 		}
 		return price;
@@ -49,8 +50,9 @@ public class Order {
 	
 	public boolean deleteTicket(int index) {
 		try {
-		tickets.remove(index);
+		String stnum=tickets.get(index).seatNumber_;
 		howmanytickets-=1;
+		new TicketDAO().deleteTicketfromBase(OrderNumber,userID,stnum);
 		return true;
 		//call delete from database.//
 		}
@@ -74,7 +76,7 @@ public class Order {
 		}
 	}*/
 	
-	public static boolean deleteOrder(String ordernumber,String userID) {
+	public static boolean deleteOrder(int ordernumber,String userID) {
 		try {
 			//get specific order from database//
 			new TicketDAO().deleteOrderfromBase(ordernumber,userID);
@@ -94,7 +96,9 @@ public class Order {
 		ArrayList<Integer> tkend =new ArrayList<Integer>();
 		ArrayList<String> tkseatnum=new ArrayList<String>();
 		TicketDAO tmpticket=new TicketDAO();
-		for(ticket tmp: tickets) {
+		ArrayList<Ticket> store=new ArrayList<Ticket>();
+		for(Ticket tmp: tickets) {
+			store.add(tmp);
 			tknum.add(tmp.trainNumber_);
 			tkdate.add(tmp.date_);
 			tktype.add(tmp.tickettype_);
@@ -103,44 +107,41 @@ public class Order {
 		}
 		int howlong=tknum.size();
 		boolean flag=true;
-		System.out.println(favorseat);
 		for(int k=0;k<howlong;k++) {
 			flag=true;
 			for(int i=0;i<9;i++) {
 				if(flag==false)break;
 				for(int j=0;j<Train.VALID_SEATS[i].length;j++) {
 					if(favorseat==0) {
-						if(tmpticket.checkSeat("0"+i+Train.VALID_SEATS[i][j], tknum.get(k),tkdate.get(k))==false&&flag==true) {
-							System.out.println(2);
-							tmpticket.bookfromBase(OrderNumber,userID,howmanytickets,tktype.get(k),tkstart.get(k),tkend.get(k),tkdate.get(k),tknum.get(k),"0"+i+Train.VALID_SEATS[i][j]);
-							tkseatnum.add("0"+i+Train.VALID_SEATS[i][j]);
+						if(tmpticket.checkSeat("0"+(i+1)+Train.VALID_SEATS[i][j], tknum.get(k),tkdate.get(k))==false&&flag==true) {
+							store.get(k).setSeatNumber(favorseat,OrderNumber,"0"+(i+1)+Train.VALID_SEATS[i][j]);
+							tmpticket.bookfromBase(store.get(k),userID);
+							tkseatnum.add("0"+(i+1)+Train.VALID_SEATS[i][j]);
 							flag=false;
 						}	
-					}
-					
+					}					
 					if(Train.VALID_SEATS[i][j].substring(Train.VALID_SEATS[i][j].length()-1)=="A"||Train.VALID_SEATS[i][j].substring(Train.VALID_SEATS[i][j].length() -1)=="E") {
-						if( favorseat!=1||tmpticket.checkSeat("0"+i+Train.VALID_SEATS[i][j], tknum.get(k),tkdate.get(k))==true) {
+						if( favorseat!=1||tmpticket.checkSeat("0"+(i+1)+Train.VALID_SEATS[i][j], tknum.get(k),tkdate.get(k))==true) {
 							;
 						}
-						else if(favorseat==1||tmpticket.checkSeat("0"+i+Train.VALID_SEATS[i][j], tknum.get(k),tkdate.get(k))==false){
+						else if(favorseat==1||tmpticket.checkSeat("0"+(i+1)+Train.VALID_SEATS[i][j], tknum.get(k),tkdate.get(k))==false){
 							if(flag==true)  {
-								System.out.println(1);
-								tmpticket.bookfromBase(OrderNumber,userID,howmanytickets,tktype.get(k),tkstart.get(k),tkend.get(k),tkdate.get(k),tknum.get(k),"0"+i+Train.VALID_SEATS[i][j]);
-								tkseatnum.add("0"+i+Train.VALID_SEATS[i][j]);
+								store.get(k).setSeatNumber(favorseat,OrderNumber,"0"+(i+1)+Train.VALID_SEATS[i][j]);
+								tmpticket.bookfromBase(store.get(k),userID);
+								tkseatnum.add("0"+(i+1)+Train.VALID_SEATS[i][j]);
 								flag=false;
 							}
 						}
 					}
 					else if (Train.VALID_SEATS[i][j].substring(Train.VALID_SEATS[i][j].length()-1)=="C"||Train.VALID_SEATS[i][j].substring(Train.VALID_SEATS[i][j].length()-1)=="D") {
-						if( favorseat!=2||tmpticket.checkSeat("0"+i+Train.VALID_SEATS[i][j], tknum.get(k),tkdate.get(k))==true) {
+						if( favorseat!=2||tmpticket.checkSeat("0"+(i+1)+Train.VALID_SEATS[i][j], tknum.get(k),tkdate.get(k))==true) {
 							;
 						}
-						else if(favorseat==2||tmpticket.checkSeat("0"+i+Train.VALID_SEATS[i][j], tknum.get(k),tkdate.get(k))==false){
+						else if(favorseat==2||tmpticket.checkSeat("0"+(i+1)+Train.VALID_SEATS[i][j], tknum.get(k),tkdate.get(k))==false){
 							if(flag==true)	{
-								System.out.println(2);
-								tmpticket.bookfromBase(OrderNumber,userID,howmanytickets,tktype.get(k),tkstart.get(k),tkend.get(k),tkdate.get(k),tknum.get(k),"0"+i+Train.VALID_SEATS[i][j]);
-								tkseatnum.add("0"+i+Train.VALID_SEATS[i][j]);
-								
+								store.get(k).setSeatNumber(favorseat,OrderNumber,"0"+(i+1)+Train.VALID_SEATS[i][j]);
+								tmpticket.bookfromBase(store.get(k),userID);
+								tkseatnum.add("0"+(i+1)+Train.VALID_SEATS[i][j]);
 								flag=false;
 							}
 						}
@@ -148,16 +149,12 @@ public class Order {
 				}
 			}
 		}
+		int count=0;
 		if(tkseatnum.isEmpty()) {
 			tkseatnum.add("0");
 			return tkseatnum;
 		}
-		int count=0;
-		for(String s: tkseatnum) {
-			System.out.println(s);
-		}
-		for(ticket tmp: tickets) {
-			System.out.println(tkseatnum.get(count)+" "+count);
+		for(Ticket tmp: tickets) {
 			tmp.seatNumber_=tkseatnum.get(count);
 			count++;
 		}
@@ -168,9 +165,9 @@ public class Order {
 		return tkseatnum;
 	}
 	
-	public static ArrayList<ticket> getTicketSeat(String ordernumber,String UserID){
-		if(new TicketDAO().searchOrder(ordernumber, UserID)==true)return new TicketDAO().getTicketsfromBase(ordernumber);
-		else return null;
+	public static int getTicket(int ordernumber,String UserID){
+		if(new TicketDAO().searchOrder(ordernumber, UserID)==true)return new TicketDAO().getTicketNum(ordernumber);
+		else return 0;
 	}
 	
 	public ArrayList<Integer> getTime(){

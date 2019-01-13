@@ -12,7 +12,7 @@ import parser.MysqlExe.RetVal;
  * This class is used to search the ticket by the ticket information.
  * @author Jerry
  */
-public class SearchTicketID {
+public class SearchOrderNum {
 	private String uid;
 	private String train_id;
 	private int date;
@@ -26,7 +26,7 @@ public class SearchTicketID {
 	 * @param start Departure Station.
 	 * @param end Destination Station.
 	 */
-	public SearchTicketID(String uid, String train_id, int date, int start, int end) {
+	public SearchOrderNum(String uid, String train_id, int date, int start, int end) {
 		this.uid = uid;
 		this.train_id = train_id;
 		this.date = date;
@@ -52,7 +52,7 @@ public class SearchTicketID {
 				sb.append("訂單代號: " + code);
 				sb.append(", 定位明細: 未付款 / " + uid + "\n");
 				sb.append("總價: " + price + "\n");
-				SearchByID search = new SearchByID(uid, Integer.toString(code));
+				SearchTicket search = new SearchTicket(uid, Integer.toString(code));
 				String details = search.exec(1);
 
 				sb.append("詳細資料:\n" + details + "\n");

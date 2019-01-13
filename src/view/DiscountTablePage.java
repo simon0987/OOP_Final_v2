@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import controll.SearchDiscount;
+import controll.SearchDiscountTrain;
 
 
 import java.awt.BorderLayout;
@@ -74,7 +74,7 @@ public class DiscountTablePage {
 	public void showDiscount(int date, int direction, int startTime, int endTime, int startStation, int endStation) throws SQLException, ParseException {
 //		System.out.println(startStation);
 //		System.out.println(endStation);
-		SearchDiscount.searchDis(model, date, direction, startTime, endTime, startStation, endStation);
+		SearchDiscountTrain.searchDis(model, date, direction, startTime, endTime, startStation, endStation);
 		if (model.getRowCount() == 0) {
 			frame.setVisible(false);
 			JOptionPane.showMessageDialog(null, "µLÀu´f¨®²¼!", "InfoBox: Failed", JOptionPane.ERROR_MESSAGE);

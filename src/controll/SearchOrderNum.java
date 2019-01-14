@@ -1,10 +1,14 @@
 package controll;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import dao.DAOFactory;
+import dao.TicketDAO;
+import entity.Order;
 import parser.MysqlExe;
 import parser.MysqlExe.RetVal;
 
@@ -38,42 +42,23 @@ public class SearchOrderNum {
 	 * Search the tickets.
 	 */
 	public void exec() {
+		ArrayList<Integer> a = new ArrayList<Integer>();
 		Vector<String> arr = new Vector<String>();
-		RetVal ret = null;
-		try {
-			ret = MysqlExe.execQuery(String.format(
-					"SELECT DISTINCT code, price FROM tickets WHERE uid=\"%s\" AND train_id=%s AND date=%d AND start=%d AND end=%d",
-					uid, train_id, date, start, end
-					));
-			while (ret.res.next()) {
-				int code = ret.res.getInt("code");
-				int price = ret.res.getInt("price");
-				StringBuffer sb = new StringBuffer();
-				sb.append("訂單代號: " + code);
-				sb.append(", 定位明細: 未付款 / " + uid + "\n");
-				sb.append("總價: " + price + "\n");
-				SearchTicket search = new SearchTicket(uid, Integer.toString(code));
-				String details = search.exec(1);
-
-				sb.append("詳細資料:\n" + details + "\n");
-				arr.add(sb.toString());
-			}
-			ret.conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (ret.conn != null) ret.conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		
+		a = Order.getOrderNum(uid, Integer.parseInt(train_id), date, start, end);
+		StringBuffer sb = new StringBuffer();
+		for(int i = 0; i < a.size();i++) {
+			sb.append("訂單代號: " + a.get(i));
+			sb.append(", 定位明細: 未付款 / " + uid + "\n");
+			arr.add(sb.toString());
 		}
+		
 		if (arr.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "查無紀錄!", "InfoBox: Failed",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		JOptionPane.showMessageDialog(null, String.join("\n", arr), "InfoBox: 查詢訂票",
+		JOptionPane.showMessageDialog(null,  String.join("\n", arr), "InfoBox: 查詢訂票",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 	

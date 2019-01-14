@@ -33,7 +33,7 @@ public class BookTicket {
 			return "座位已售完";
 		}
 		if (ifGoBack) {
-			back.listTrain(backBox, backDate, start, end, backt1, backt2, count, side, type, backEarly);
+			back.listTrain(backBox, backDate, end, start, backt1, backt2, count, side, type, backEarly);
 			if (back.getSize() == 0) {
 				return "座位已售完";
 			}

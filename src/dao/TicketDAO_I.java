@@ -1,6 +1,8 @@
 package dao;
 
 import java.util.ArrayList;
+import java.util.Vector;
+
 import entity.Ticket;
 
 public interface TicketDAO_I {
@@ -14,7 +16,7 @@ public interface TicketDAO_I {
 	/*
 	 * get which orderNumber that hasn't been used.
 	 */
-	public ArrayList<Integer> getOrderNumberFromBase(String userID, int trainNumber, String date, int start, int end);
+	public ArrayList<Integer> getOrderNumberFromBase(String userID, int trainNumber ,String date, int start, int end);
 
 	/*
 	 * delete Ticket from database. please return True or false in order to let me
@@ -24,7 +26,9 @@ public interface TicketDAO_I {
 	/*
 	 * delete order from database
 	 */
-
+	
+	public boolean getTicket(Vector<String> arr,String uid_in,String code);
+	
 	public void deleteOrderfromBase(int OrderNumber, String userID);
 
 	/*

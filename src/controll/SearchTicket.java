@@ -5,6 +5,8 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import dao.DAOFactory;
+import dao.TicketDAO;
 import entity.Station;
 import entity.Train;
 import parser.MysqlExe;
@@ -34,45 +36,9 @@ public class SearchTicket {
 	 */
 	public String exec(int tostr) {
 		Vector<String> arr = new Vector<String>();
+		TicketDAO ticketdao = DAOFactory.getTicket_DAO();
+		boolean userCheck = ticketdao.getTicket(arr,uid,code);
 		
-		RetVal ret = null;
-		boolean userCheck = true;
-		try {
-			ret = MysqlExe.execQuery(String.format(
-					"SELECT * FROM tickets WHERE code=\"%s\"", code
-					));
-			while (ret.res.next()) {
-				String uid = ret.res.getString("uid");
-				if (!uid.equals(this.uid)) userCheck = false;
-				int train_id = ret.res.getInt("train_id");
-				int date = ret.res.getInt("date");
-				int st = ret.res.getInt("start");
-				int ed = ret.res.getInt("end");
-				int t1 = ret.res.getInt("start_time");
-				int t2 = ret.res.getInt("end_time");
-				int dur = Convert_Time.getDur(t1, t2);
-				String type = Train.TICKET_TYPE_2[ret.res.getInt("ticketsType")];
-				String seat = ret.res.getString("seat_id");
-				StringBuffer sb = new StringBuffer();
-				sb.append("車次: " + train_id);
-				sb.append(", 日期: " + date);
-				sb.append(", 起/訖站: " + Station.CHI_NAME[st] + "->" + Station.CHI_NAME[ed]);
-				sb.append(", 出發/到達時間: " + t1 + "->" + t2);
-				sb.append(", 行車時間: " + dur);
-				sb.append(", 座位: " + seat);
-				sb.append(", 類型: " + type);
-				arr.add(sb.toString());
-			}
-			ret.conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (ret.conn != null) ret.conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
 		if (arr.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "您輸入的訂位代號有誤，請重新輸入!", "InfoBox: Failed",
 					JOptionPane.ERROR_MESSAGE);

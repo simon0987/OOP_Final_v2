@@ -233,12 +233,13 @@ public class TicketDAO implements TicketDAO_I {
 		
 		try {
 			ret = MysqlExe.execQuery(String.format(
-					"SELECT * FROM tickets WHERE code=%d LIMIT 1", orderNumber
+					"SELECT uid FROM tickets WHERE code=%d", orderNumber
 					));
-			assert(ret.res.next()); 
-			String uid = ret.res.getString("uid");
-			if (!uid.equals(userID)) {
-				userCheck = false;
+			if(ret.res.next()) { 
+				String uid = ret.res.getString("uid");
+				if (!uid.equals(userID)) {
+					userCheck = false;
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

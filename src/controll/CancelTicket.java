@@ -32,19 +32,19 @@ public class CancelTicket {
 		}
 		
 		if(ticketCount == 0) {
-			if(ticketDAO.deleteTicketsfromBase(orderNumber, userID, ticketCount)) {
-				return "修改成功，已將您人數變更為" + ticketDAO.getTicketNum(orderNumber) + "位";
-			}
-			else {
-				return "修改失敗";
-			}
-		}
-		else {
 			if(Order.deleteOrder(orderNumber, userID)) {
 				return "退票成功，已取消您的訂位紀錄";
 			}
 			else {
 				return "退票成功";
+			}
+		}
+		else {
+			if(ticketDAO.deleteTicketsfromBase(orderNumber, userID, ticketCount)) {
+				return "修改成功，已將您人數變更為" + ticketDAO.getTicketNum(orderNumber) + "位";
+			}
+			else {
+				return "修改失敗";
 			}
 		}
 	}

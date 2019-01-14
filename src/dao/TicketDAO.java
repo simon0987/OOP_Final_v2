@@ -2,17 +2,10 @@ package dao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Vector;
-
-import controll.Convert_Time;
-
-//import javax.swing.JOptionPane;
 
 import parser.MysqlExe;
 import parser.MysqlExe.RetVal;
-import entity.Station;
 import entity.Ticket;
-import entity.Train;
 
 /**
  * @author Tim
@@ -80,7 +73,7 @@ public class TicketDAO implements TicketDAO_I {
 		
 		try {
 			ret = MysqlExe.execQuery(String.format(
-					"SELECT DISTINCT code FROM tickets WHERE uid=\"%s\" AND train_id=%d AND date=%s AND start=%d AND end=%d",
+					"SELECT DISTINCT code FROM tickets WHERE uid=\"%s\" AND train_id=%d AND date=\"%s\" AND start=%d AND end=%d",
 					userId, trainNumber, date, start, end
 					));
 			while (ret.res.next()) {
@@ -105,25 +98,54 @@ public class TicketDAO implements TicketDAO_I {
 	 * This part is in UpdateTicket.java of sample code.
 	 */
 	@Override
-	public void deleteTicketfromBase(int orderNumber, String userID, String seatID) {
+	public boolean deleteTicketsfromBase(int orderNumber, String userID, int decreaseCount) {
+		RetVal ret = null;
+		int st = 0, ed = 0;
+		int dir = 0;
 		try {
-			MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%d AND seat=\"%s\"", orderNumber, seatID));
+			ret = MysqlExe.execQuery(String.format(
+					"SELECT count(*), start, end FROM tickets WHERE code=\"%s\" GROUP BY start, end", orderNumber
+					));
+			
+			while (ret.res.next()) {
+				st = ret.res.getInt("start");
+				ed = ret.res.getInt("end");
+				dir++;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (ret.conn != null) ret.conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%s AND start=%d LIMIT %d", orderNumber, st, decreaseCount));
+			if (dir == 2)
+				MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%s AND start=%d LIMIT %d", orderNumber, ed, decreaseCount));
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 	/*
 	 * '(non-Javadoc)
-	 * @see dao.TicketDAO_I#deleteOrderfromBase(int)
+	 * @see dao.TicketDAO_I#deletesOrderfromBase(int)
 	 * 
 	 * This part is in UpdateTicket.java of sample code.
 	 */
 	@Override
-	public void deleteOrderfromBase(int orderNumber, String userID) {
+	public boolean deleteOrderfromBase(int orderNumber, String userID) {
 		try {
 			MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%d", orderNumber));
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 	/*
@@ -143,6 +165,17 @@ public class TicketDAO implements TicketDAO_I {
 					));
 			assert(ret.res.next());
 			count = ret.res.getInt(1);
+			// Should have a better solution!!!!
+			ret = MysqlExe.execQuery(String.format(
+					"SELECT count(*), start FROM tickets WHERE code=\"%s\" GROUP BY start, end", orderNumber
+					));
+			int dir = 0;
+			while (ret.res.next()) {
+				dir++;
+			}
+			if(dir == 2) { 
+				count /= 2; // 來回票是同時取消的
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -213,45 +246,5 @@ public class TicketDAO implements TicketDAO_I {
 		}
 		return userCheck;
 	}
-	public boolean getTicket(Vector<String> arr,String uid_in, String code) {
-		RetVal ret = null;
-		boolean userCheck = true;
-		try {
-			ret = MysqlExe.execQuery(String.format(
-					"SELECT * FROM tickets WHERE code=\"%s\"", code
-					));
-			while (ret.res.next()) {
-				String uid = ret.res.getString("uid");
-				if (!uid.equals(uid_in)) userCheck = false;
-				int train_id = ret.res.getInt("train_id");
-				int date = ret.res.getInt("date");
-				int st = ret.res.getInt("start");
-				int ed = ret.res.getInt("end");
-				int t1 = ret.res.getInt("start_time");
-				int t2 = ret.res.getInt("end_time");
-				int dur = Convert_Time.getDur(t1, t2);
-				String type = Train.TICKET_TYPE_2[ret.res.getInt("ticketsType")];
-				String seat = ret.res.getString("seat_id");
-				StringBuffer sb = new StringBuffer();
-				sb.append("車次: " + train_id);
-				sb.append(", 日期: " + date);
-				sb.append(", 起/訖站: " + Station.CHI_NAME[st] + "->" + Station.CHI_NAME[ed]);
-				sb.append(", 出發/到達時間: " + t1 + "->" + t2);
-				sb.append(", 行車時間: " + dur);
-				sb.append(", 座位: " + seat);
-				sb.append(", 類型: " + type);
-				arr.add(sb.toString());
-			}
-			ret.conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (ret.conn != null) ret.conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return userCheck;
-	}
+	
 }

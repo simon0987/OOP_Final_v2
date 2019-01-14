@@ -47,7 +47,8 @@ public class Order {
 		}
 		return price;
 	}
-	
+	// deleteTicketfromBase is changed to deleteTicketsfromBase
+	/* 
 	public boolean deleteTicket(int index) {
 		try {
 		String stnum=tickets.get(index).seatNumber_;
@@ -60,7 +61,7 @@ public class Order {
 			return false;
 		}
 	}
-	
+	*/
 /*	public static Order getOrder(String ordernumber,String userID) {
 		try {
 			ArrayList<ticket>ticketstmp=new TicketDAO().getTicketsfromBase(ordernumber);		

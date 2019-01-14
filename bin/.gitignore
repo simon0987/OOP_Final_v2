@@ -1,5 +1,6 @@
+/.DS_Store
 /controll/
-/view/
-/entity/
 /dao/
+/entity/
 /parser/
+/view/

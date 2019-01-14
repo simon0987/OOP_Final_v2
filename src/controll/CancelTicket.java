@@ -21,10 +21,10 @@ public class CancelTicket {
 	public String deleteTickets(String userID, int orderNumber, int ticketCount) {
 		TicketDAO ticketDAO = DAOFactory.getTicket_DAO();
 		
-		if(ticketDAO.searchOrder(orderNumber, userID)) {
+		if(!ticketDAO.searchOrder(orderNumber, userID)) {
 			return "您輸入的訂位代號有誤，請重新輸入!";
 		}
-		if(ticketDAO.confirmUser(orderNumber, userID)) {
+		if(!ticketDAO.confirmUser(orderNumber, userID)) {
 			return "您輸入的身份識別號碼有誤，請重新輸入!";
 		}
 		if(ticketCount > ticketDAO.getTicketNum(orderNumber)) {

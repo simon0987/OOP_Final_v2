@@ -16,20 +16,20 @@ public interface TicketDAO_I {
 	/*
 	 * get which orderNumber that hasn't been used.
 	 */
-	public ArrayList<Integer> getOrderNumberFromBase(String userID, int trainNumber ,String date, int start, int end);
+	public ArrayList<Integer> getOrderNumberFromBase(String userID, int trainNumber, String date, int start, int end);
 
 	/*
 	 * delete Ticket from database. please return True or false in order to let me
 	 * know if the function work well.
 	 */
-	public void deleteTicketfromBase(int OrderNumber, String userID, String seatID);
+	public boolean deleteTicketsfromBase(int OrderNumber, String userID, int decreaseCount);
 	/*
 	 * delete order from database
 	 */
+
+	public boolean deleteOrderfromBase(int OrderNumber, String userID);
 	
 	public boolean getTicket(Vector<String> arr,String uid_in,String code);
-	
-	public void deleteOrderfromBase(int OrderNumber, String userID);
 
 	/*
 	 * you can store an object in the ArrayList ,I'll Cooperate to get the deta.

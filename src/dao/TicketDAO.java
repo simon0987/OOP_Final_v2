@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import controll.Convert_Time;
-
-//import javax.swing.JOptionPane;
-
 import parser.MysqlExe;
 import parser.MysqlExe.RetVal;
 import entity.Station;
@@ -80,7 +77,7 @@ public class TicketDAO implements TicketDAO_I {
 		
 		try {
 			ret = MysqlExe.execQuery(String.format(
-					"SELECT DISTINCT code FROM tickets WHERE uid=\"%s\" AND train_id=%d AND date=%s AND start=%d AND end=%d",
+					"SELECT DISTINCT code FROM tickets WHERE uid=\"%s\" AND train_id=%d AND date=\"%s\" AND start=%d AND end=%d",
 					userId, trainNumber, date, start, end
 					));
 			while (ret.res.next()) {
@@ -105,25 +102,54 @@ public class TicketDAO implements TicketDAO_I {
 	 * This part is in UpdateTicket.java of sample code.
 	 */
 	@Override
-	public void deleteTicketfromBase(int orderNumber, String userID, String seatID) {
+	public boolean deleteTicketsfromBase(int orderNumber, String userID, int decreaseCount) {
+		RetVal ret = null;
+		int st = 0, ed = 0;
+		int dir = 0;
 		try {
-			MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%d AND seat=\"%s\"", orderNumber, seatID));
+			ret = MysqlExe.execQuery(String.format(
+					"SELECT count(*), start, end FROM tickets WHERE code=\"%s\" GROUP BY start, end", orderNumber
+					));
+			
+			while (ret.res.next()) {
+				st = ret.res.getInt("start");
+				ed = ret.res.getInt("end");
+				dir++;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (ret.conn != null) ret.conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%s AND start=%d LIMIT %d", orderNumber, st, decreaseCount));
+			if (dir == 2)
+				MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%s AND start=%d LIMIT %d", orderNumber, ed, decreaseCount));
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 	/*
 	 * '(non-Javadoc)
-	 * @see dao.TicketDAO_I#deleteOrderfromBase(int)
+	 * @see dao.TicketDAO_I#deletesOrderfromBase(int)
 	 * 
 	 * This part is in UpdateTicket.java of sample code.
 	 */
 	@Override
-	public void deleteOrderfromBase(int orderNumber, String userID) {
+	public boolean deleteOrderfromBase(int orderNumber, String userID) {
 		try {
 			MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%d", orderNumber));
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 	/*
@@ -143,6 +169,17 @@ public class TicketDAO implements TicketDAO_I {
 					));
 			assert(ret.res.next());
 			count = ret.res.getInt(1);
+			// Should have a better solution!!!!
+			ret = MysqlExe.execQuery(String.format(
+					"SELECT count(*), start FROM tickets WHERE code=\"%s\" GROUP BY start, end", orderNumber
+					));
+			int dir = 0;
+			while (ret.res.next()) {
+				dir++;
+			}
+			if(dir == 2) { 
+				count /= 2; // 來回票是同時取消的
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -213,6 +250,7 @@ public class TicketDAO implements TicketDAO_I {
 		}
 		return userCheck;
 	}
+	
 	public boolean getTicket(Vector<String> arr,String uid_in, String code) {
 		RetVal ret = null;
 		boolean userCheck = true;

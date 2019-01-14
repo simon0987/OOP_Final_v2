@@ -25,7 +25,7 @@ import javax.swing.SwingConstants;
 import controll.BookTicket;
 import controll.SearchTicket;
 import controll.SearchOrderNum;
-import controll.UpdateTicket;
+import controll.CancelTicket;
 import controll.ParseTimeTable;
 import controll.Convert_Time;
 import entity.Station;
@@ -448,7 +448,7 @@ public class MainPage {
 					JOptionPane.showMessageDialog(null, "數量必須為整數!", "InfoBox: Failed", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				UpdateTicket update = new UpdateTicket(uid, code, tickets);
+				CancelTicket update = new CancelTicket(uid, code, tickets);
 				update.exec();
 			}
 		});

@@ -108,7 +108,7 @@ public class TicketDAO implements TicketDAO_I {
 		int dir = 0;
 		try {
 			ret = MysqlExe.execQuery(String.format(
-					"SELECT count(*), start, end FROM tickets WHERE code=\"%s\" GROUP BY start, end", orderNumber
+					"SELECT count(*), start, end FROM tickets WHERE code=%d GROUP BY start, end", orderNumber
 					));
 			
 			while (ret.res.next()) {
@@ -127,9 +127,9 @@ public class TicketDAO implements TicketDAO_I {
 		}
 		
 		try {
-			MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%s AND start=%d LIMIT %d", orderNumber, st, decreaseCount));
+			MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%d AND start=%d LIMIT %d", orderNumber, st, decreaseCount));
 			if (dir == 2)
-				MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%s AND start=%d LIMIT %d", orderNumber, ed, decreaseCount));
+				MysqlExe.execStmt(String.format("DELETE FROM tickets WHERE code=%d AND start=%d LIMIT %d", orderNumber, ed, decreaseCount));
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -165,13 +165,14 @@ public class TicketDAO implements TicketDAO_I {
 		
 		try {
 			ret = MysqlExe.execQuery(String.format(
-					"SELECT COUNT(*) FROM tickets WHERE code=\"%s\"", orderNumber
+					"SELECT * FROM tickets WHERE code=%d", orderNumber
 					));
-			assert(ret.res.next());
-			count = ret.res.getInt(1);
+			while (ret.res.next()) {
+				count++;
+			}
 			// Should have a better solution!!!!
 			ret = MysqlExe.execQuery(String.format(
-					"SELECT count(*), start FROM tickets WHERE code=\"%s\" GROUP BY start, end", orderNumber
+					"SELECT count(*), start FROM tickets WHERE code=%d GROUP BY start, end", orderNumber
 					));
 			int dir = 0;
 			while (ret.res.next()) {

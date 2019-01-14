@@ -26,15 +26,3 @@ All of the above jars are in "official jar/"
   ```
 
 * Use Eclipse to open the project.
-
-* Run MainPage.java to start the application.
-
-![search](img/booking.png)
-
-![search](img/searching.png)
-
-![search](img/modification.png)
-
-#### BUG
-
-* All the Chinese character are encoded in BIG-5.# OOP_Final_v2

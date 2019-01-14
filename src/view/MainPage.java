@@ -129,7 +129,7 @@ public class MainPage {
 		panelBook.add(label_9);
 
 		JComboBox<String> buyStart = new JComboBox<String>();
-		buyStart.setBounds(62, 94, 52, 21);
+		buyStart.setBounds(47, 94, 76, 21);
 		panelBook.add(buyStart);
 
 		JButton buySearch = new JButton("\u67E5\u8A62");
@@ -150,7 +150,7 @@ public class MainPage {
 		panelBook.add(label_7);
 
 		JComboBox<String> buyEnd = new JComboBox<String>();
-		buyEnd.setBounds(158, 94, 60, 21);
+		buyEnd.setBounds(152, 94, 76, 21);
 		panelBook.add(buyEnd);
 
 		JLabel label_8 = new JLabel("\u5F35\u6578");
@@ -174,12 +174,12 @@ public class MainPage {
 		panelBook.add(label_11);
 
 		JComboBox<String> seatSide = new JComboBox(Train.SEAT_TYPE);
-		seatSide.setBounds(62, 122, 70, 21);
+		seatSide.setBounds(47, 122, 96, 21);
 		panelBook.add(seatSide);
 
 		JCheckBox goBack = new JCheckBox("\u56DE\u7A0B");
 
-		goBack.setBounds(377, 66, 60, 23);
+		goBack.setBounds(347, 66, 60, 23);
 		panelBook.add(goBack);
 
 		JLabel label_12 = new JLabel("\u8ECA\u6B21\u67E5\u8A62");
@@ -232,46 +232,46 @@ public class MainPage {
 		panelBook.add(bookTicket);
 
 		JLabel label_21 = new JLabel("\u51FA\u767C\u6642\u9593");
-		label_21.setBounds(85, 153, 57, 15);
+		label_21.setBounds(52, 153, 57, 15);
 		panelBook.add(label_21);
 
 		JComboBox<String> goTime = new JComboBox<String>();
-		goTime.setBounds(140, 150, 60, 21);
+		goTime.setBounds(105, 150, 86, 21);
 		panelBook.add(goTime);
 
 		JLabel label_22 = new JLabel("\u62B5\u9054\u6642\u9593");
-		label_22.setBounds(210, 153, 57, 15);
+		label_22.setBounds(190, 153, 57, 15);
 		panelBook.add(label_22);
 
 		JComboBox<String> backTime = new JComboBox<String>();
-		backTime.setBounds(265, 150, 60, 21);
+		backTime.setBounds(239, 150, 86, 21);
 		panelBook.add(backTime);
 
 		JLabel label_18 = new JLabel("\u51FA\u767C\u6642\u9593");
-		label_18.setBounds(439, 69, 57, 15);
+		label_18.setBounds(410, 69, 57, 15);
 		panelBook.add(label_18);
 
 		JComboBox<String> goTime2 = new JComboBox<String>();
 		goTime2.setEnabled(false);
-		goTime2.setBounds(494, 66, 60, 21);
+		goTime2.setBounds(460, 66, 86, 21);
 		panelBook.add(goTime2);
 
 		JLabel label_20 = new JLabel("\u62B5\u9054\u6642\u9593");
-		label_20.setBounds(564, 69, 57, 15);
+		label_20.setBounds(544, 69, 57, 15);
 		panelBook.add(label_20);
 
 		JComboBox<String> backTime2 = new JComboBox<String>();
 		backTime2.setEnabled(false);
-		backTime2.setBounds(619, 66, 60, 21);
+		backTime2.setBounds(594, 66, 86, 21);
 		panelBook.add(backTime2);
 
 		JLabel lblNewLabel_1 = new JLabel("\u53BB\u7A0B");
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.TRAILING);
-		lblNewLabel_1.setBounds(37, 153, 32, 15);
+		lblNewLabel_1.setBounds(13, 153, 32, 15);
 		panelBook.add(lblNewLabel_1);
 
 		JLabel label_23 = new JLabel("\u56DE\u7A0B\u65E5\u671F");
-		label_23.setBounds(374, 41, 63, 15);
+		label_23.setBounds(357, 41, 63, 15);
 		panelBook.add(label_23);
 
 		JComboBox<String> buyBackDate = new JComboBox<String>();
@@ -413,7 +413,7 @@ public class MainPage {
 		deleteTicket.setBounds(331, 34, 107, 23);
 		panelCancel.add(deleteTicket);
 
-		JRadioButton reduceTicket = new JRadioButton("\u4FEE\u6539\u7968\u6578");
+		JRadioButton reduceTicket = new JRadioButton("\u6e1b\u5c11\u4eba\u6578");
 		reduceTicket.setBounds(331, 62, 86, 23);
 		panelCancel.add(reduceTicket);
 

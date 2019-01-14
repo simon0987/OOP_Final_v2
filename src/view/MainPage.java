@@ -384,11 +384,11 @@ public class MainPage {
 		tabbedPane_1.addTab("\u9000\u7968\u8207\u4FEE\u6539", null, panelCancel, null);
 		panelCancel.setLayout(null);
 
-		JLabel updateTicketLabel = new JLabel("\u67E5\u8A62\u8A02\u7968 - \u6709\u8A02\u4F4D\u4EE3\u865F");
-		updateTicketLabel
-				.setFont(updateTicketLabel.getFont().deriveFont(updateTicketLabel.getFont().getStyle() | Font.BOLD));
-		updateTicketLabel.setBounds(10, 10, 212, 15);
-		panelCancel.add(updateTicketLabel);
+		JLabel cancelTicketLabel = new JLabel("\u67E5\u8A62\u8A02\u7968 - \u6709\u8A02\u4F4D\u4EE3\u865F");
+		cancelTicketLabel
+				.setFont(cancelTicketLabel.getFont().deriveFont(cancelTicketLabel.getFont().getStyle() | Font.BOLD));
+		cancelTicketLabel.setBounds(10, 10, 212, 15);
+		panelCancel.add(cancelTicketLabel);
 
 		JLabel label_14 = new JLabel("\u4F7F\u7528\u8005ID");
 		label_14.setBounds(20, 38, 54, 15);
@@ -426,11 +426,13 @@ public class MainPage {
 		newTicketCount.setBounds(423, 63, 256, 21);
 		panelCancel.add(newTicketCount);
 
-		JButton updateTicket = new JButton("\u66F4\u65B0");
-		updateTicket.addActionListener(new ActionListener() {
+		JButton cancelTicket = new JButton("\u66F4\u65B0");
+		cancelTicket.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String uid = newTicketUID.getText();
 				String code = newTicketCode.getText();
+				int tickets = 0;
+				
 				if (uid.equals("")) {
 					JOptionPane.showMessageDialog(null, "UID不可為空!", "InfoBox: Failed", JOptionPane.ERROR_MESSAGE);
 					return;
@@ -439,21 +441,28 @@ public class MainPage {
 					JOptionPane.showMessageDialog(null, "訂位代號不可為空!", "InfoBox: Failed", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				int tickets = 0;
+
+				CancelTicket cancelTicketControl = new CancelTicket();
+				
 				try {
 					if (reduceTicket.isSelected()) {
-						tickets = Integer.parseInt(newTicketCount.getText());
+						tickets = Integer.parseInt(newTicketCount.getText()); // This part may cause exception!
+						if(tickets <= 0) {
+							JOptionPane.showMessageDialog(null, "數量必須為正整數!", "InfoBox: Failed", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
 					}
+					String result = cancelTicketControl.deleteTickets(uid, Integer.parseInt(code), tickets);
+					JOptionPane.showMessageDialog(null, result, "InfoBox: 提示",
+							JOptionPane.ERROR_MESSAGE); // Only "修改成功.../退票成功..." is not an error message
+					
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "數量必須為整數!", "InfoBox: Failed", JOptionPane.ERROR_MESSAGE);
-					return;
+					JOptionPane.showMessageDialog(null, "數量必須為正整數!", "InfoBox: Failed", JOptionPane.ERROR_MESSAGE);
 				}
-				CancelTicket update = new CancelTicket(uid, code, tickets);
-				update.exec();
 			}
-		});
-		updateTicket.setBounds(20, 94, 659, 23);
-		panelCancel.add(updateTicket);
+		});		
+		cancelTicket.setBounds(20, 94, 659, 23);
+		panelCancel.add(cancelTicket);
 
 		JPanel panelSearch = new JPanel();
 		tabbedPane_1.addTab("\u67E5\u8A62", null, panelSearch, null);

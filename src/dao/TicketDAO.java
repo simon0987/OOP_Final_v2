@@ -2,10 +2,14 @@ package dao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Vector;
 
+import controll.Convert_Time;
 import parser.MysqlExe;
 import parser.MysqlExe.RetVal;
+import entity.Station;
 import entity.Ticket;
+import entity.Train;
 
 /**
  * @author Tim
@@ -247,4 +251,45 @@ public class TicketDAO implements TicketDAO_I {
 		return userCheck;
 	}
 	
+	public boolean getTicket(Vector<String> arr,String uid_in, String code) {
+		RetVal ret = null;
+		boolean userCheck = true;
+		try {
+			ret = MysqlExe.execQuery(String.format(
+					"SELECT * FROM tickets WHERE code=\"%s\"", code
+					));
+			while (ret.res.next()) {
+				String uid = ret.res.getString("uid");
+				if (!uid.equals(uid_in)) userCheck = false;
+				int train_id = ret.res.getInt("train_id");
+				int date = ret.res.getInt("date");
+				int st = ret.res.getInt("start");
+				int ed = ret.res.getInt("end");
+				int t1 = ret.res.getInt("start_time");
+				int t2 = ret.res.getInt("end_time");
+				int dur = Convert_Time.getDur(t1, t2);
+				String type = Train.TICKET_TYPE_2[ret.res.getInt("ticketsType")];
+				String seat = ret.res.getString("seat_id");
+				StringBuffer sb = new StringBuffer();
+				sb.append("車次: " + train_id);
+				sb.append(", 日期: " + date);
+				sb.append(", 起/訖站: " + Station.CHI_NAME[st] + "->" + Station.CHI_NAME[ed]);
+				sb.append(", 出發/到達時間: " + t1 + "->" + t2);
+				sb.append(", 行車時間: " + dur);
+				sb.append(", 座位: " + seat);
+				sb.append(", 類型: " + type);
+				arr.add(sb.toString());
+			}
+			ret.conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (ret.conn != null) ret.conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return userCheck;
+	}
 }

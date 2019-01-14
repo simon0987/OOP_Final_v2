@@ -1,6 +1,8 @@
 package dao;
 
 import java.util.ArrayList;
+import java.util.Vector;
+
 import entity.Ticket;
 
 public interface TicketDAO_I {
@@ -26,6 +28,8 @@ public interface TicketDAO_I {
 	 */
 
 	public boolean deleteOrderfromBase(int OrderNumber, String userID);
+	
+	public boolean getTicket(Vector<String> arr,String uid_in,String code);
 
 	/*
 	 * you can store an object in the ArrayList ,I'll Cooperate to get the deta.
